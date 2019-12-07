@@ -24,6 +24,20 @@ let g:fauxClip_paste_primary_cmd = 'xclip -o 2> /dev/null'
 
 ---
 
+The main difference between **fauxClip** and +clipboard are command line `:yank`
+and `:delete`. For range based selection through command line mode this plugin
+defines two commands: `[range]Y [x]` and `[range]D [x]`, where `[x]` is either
+`+` or `*`.
+
+Example: Yank to _clipboard_ whole file then to _primary_ delete lines from 4 to 16
+
+```vim
+:%Y +
+:4,16D *
+```
+
+---
+
 If variable `g:fauxClip_enable_aliases` is set to `1`, fauxClip will define
 the following command line mode aliases:
 
