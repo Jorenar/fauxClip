@@ -27,10 +27,6 @@ if !exists('g:fauxClip_paste_primary_cmd')
     let g:fauxClip_paste_primary_cmd = 'xclip -o 2> /dev/null'
 endif
 
-if !exists('g:fauxClip_enable_aliases')
-    let g:fauxClip_enable_aliases = 0
-endif
-
 " Mappings {{{1
 
 nnoremap <expr> "* fauxClip#start("*")
@@ -54,16 +50,10 @@ inoremap <C-r><C-p>*  <C-r><C-p>=fauxClip#paste("*")<CR>
 command -range -nargs=1 Y execute "<line1>,<line2>!".expand('<args>' == '*' ? g:fauxClip_copy_primary_cmd : g:fauxClip_copy_cmd)
 command -range -nargs=1 D execute "<line1>,<line2>!".expand('<args>' == '*' ? g:fauxClip_copy_primary_cmd : g:fauxClip_copy_cmd) | silent! execute "<line1>,<line2>d _"
 
-if g:fauxClip_enable_aliases
-    ca d* D *
-    ca d+ D +
-    ca y* Y *
-    ca y+ Y +
-    ca %d* %D *
-    ca %d+ %D +
-    ca %y* %Y *
-    ca %y+ %Y +
-endif
+cmap <expr> d* getcmdtype() == ':' ? 'D *' : 'd*'
+cmap <expr> d+ getcmdtype() == ':' ? 'D +' : 'd+'
+cmap <expr> y* getcmdtype() == ':' ? 'Y *' : 'y*'
+cmap <expr> y+ getcmdtype() == ':' ? 'Y +' : 'y+'
 
 " End "{{{1
 let g:loaded_fauxClip = 1
