@@ -59,6 +59,10 @@ if g:fauxClip_enable_aliases
     ca d+ D +
     ca y* Y *
     ca y+ Y +
+    ca %d* %D *
+    ca %d+ %D +
+    ca %y* %Y *
+    ca %y+ %Y +
 endif
 
 " End "{{{1
