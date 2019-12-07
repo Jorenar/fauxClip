@@ -12,7 +12,7 @@ if exists('g:loaded_fauxClip')
 endif
 
 if !exists('g:fauxClip_copy_cmd')
-    let g:fauxClip_copy_cmd = 'xclip -i -selection clipboard'
+    let g:fauxClip_copy_cmd = 'xclip -f -i -selection clipboard'
 endif
 
 if !exists('g:fauxClip_paste_cmd')
@@ -20,7 +20,7 @@ if !exists('g:fauxClip_paste_cmd')
 endif
 
 if !exists('g:fauxClip_copy_primary_cmd')
-    let g:fauxClip_copy_primary_cmd = 'xclip -i'
+    let g:fauxClip_copy_primary_cmd = 'xclip -f -i'
 endif
 
 if !exists('g:fauxClip_paste_primary_cmd')
