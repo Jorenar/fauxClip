@@ -4,6 +4,7 @@
 function! fauxClip#start(REG)
     let s:REG = a:REG
     let s:reg = getreg('"')
+    let s:regtype = getregtype('"')
 
     let @@ = fauxClip#paste(s:REG)
 
@@ -38,8 +39,8 @@ function! fauxClip#end()
     augroup fauxClip
         autocmd!
     augroup END
-    call setreg('"', s:reg)
-    unlet! s:reg s:REG
+    call setreg('"', s:reg, s:regtype)
+    unlet! s:reg s:regtype s:REG
 endfunction
 
 function! fauxClip#cmd_wrapper()
