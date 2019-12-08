@@ -50,6 +50,6 @@ function! fauxClip#cmd(cmd, reg) range
 endfunction
 
 function! fauxClip#cmd_wrapper()
-    let cmd = substitute(getcmdline(), '\<\(y[%[ank]\|d\%[elete]\|p\%[ut]!\?\)\s*\([+\*]\)', 'call fauxClip#cmd(''\1'', ''\2'')', 'g')
+    let cmd = substitute(getcmdline(), '\<\(y\%[ank]\|d\%[elete]\|p\%[ut]!\?\)\s*\([+*]\)', 'call fauxClip#cmd(''\1'', ''\2'')', 'g')
     execute cmd
 endfunction
