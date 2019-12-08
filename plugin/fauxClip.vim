@@ -1,7 +1,7 @@
 " fauxClip - Clipboard support without +clipboard
 " Maintainer:  Jorengarenar <https://joren.ga>
 
-if &cp || has("clipboard") || exists('g:loaded_fauxClip') || !exists('##TextYankPost')  || !exists('##TextChanged') || !exists('##CmdlineLeave')
+if &cp || has("clipboard") || exists('g:loaded_fauxClip') || !exists('##TextYankPost') || !exists('##TextChanged') || !exists('##CmdlineLeave')
     finish
 endif
 
@@ -39,7 +39,7 @@ endif
 
 augroup fauxClipCmdWrapper
     autocmd!
-    autocmd CmdlineLeave : if getcmdline() =~ "[dy].*[+*]" | call fauxClip#cmd_wrapper() | endif
+    autocmd CmdlineLeave : if getcmdline() =~# '[dyp]\w*\s*[+*]' | call fauxClip#cmd_wrapper() | endif
 augroup END
 
 nnoremap <expr> "* fauxClip#start("*")

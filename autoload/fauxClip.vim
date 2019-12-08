@@ -43,10 +43,13 @@ function! fauxClip#end()
     unlet! s:reg s:regtype s:REG
 endfunction
 
+function! fauxClip#cmd(cmd, reg) range
+    let range = a:firstline . ',' . a:lastline
+    call fauxClip#start(a:reg)
+    execute range . a:cmd
+endfunction
+
 function! fauxClip#cmd_wrapper()
-    command! -bar -range -nargs=1 FauxClipY execute "<line1>,<line2>!".expand('<args>' == '*' ? g:fauxClip_copy_primary_cmd : g:fauxClip_copy_cmd) | if &mod | undo | endif
-    command! -bar -range -nargs=1 FauxClipD execute "<line1>,<line2>!".expand('<args>' == '*' ? g:fauxClip_copy_primary_cmd : g:fauxClip_copy_cmd) | execute "<line1>,<line2>d _"
-    execute substitute(getcmdline(), '\(y\|ya\|yank\?\|d\|de\|del\|dele\|delete\?\)\s*\([+\*]\)', '\="FauxClip".toupper(submatch(1)[0])." ".submatch(2)', 'g')
-    setlocal nomodifiable
-    call timer_start(0, {-> execute("delc FauxClipY | delc FauxClipD | setlocal modifiable | redraw!")})
+    let cmd = substitute(getcmdline(), '\<\(y[%[ank]\|d\%[elete]\|p\%[ut]!\?\)\s*\([+\*]\)', 'call fauxClip#cmd(''\1'', ''\2'')', 'g')
+    execute cmd
 endfunction
