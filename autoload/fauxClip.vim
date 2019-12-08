@@ -1,23 +1,23 @@
 " fauxClip - Clipboard support without +clipboard
 " Maintainer:  Jorengarenar <https://joren.ga>
 
-function! fauxClip#start(X_reg)
-    let s:X_reg = a:X_reg
+function! fauxClip#start(REG)
+    let s:REG = a:REG
     let s:reg = getreg('"')
 
-    let @@ = fauxClip#paste(s:X_reg)
+    let @@ = fauxClip#paste(s:REG)
 
     augroup fauxClip
         autocmd!
-        autocmd TextYankPost * ++once if v:event.regname == '"' | call fauxClip#yank(v:event.regcontents, s:X_reg) | endif
+        autocmd TextYankPost * ++once if v:event.regname == '"' | call fauxClip#yank(v:event.regcontents, s:REG) | endif
         autocmd TextChanged  * ++once call fauxClip#end()
     augroup END
 
     return '""'
 endfunction
 
-function! fauxClip#yank(content, X_reg)
-    if a:X_reg == "+"
+function! fauxClip#yank(content, REG)
+    if a:REG == "+"
         call system(g:fauxClip_copy_cmd, a:content)
     else
         call system(g:fauxClip_copy_primary_cmd, a:content)
@@ -26,8 +26,8 @@ function! fauxClip#yank(content, X_reg)
     call fauxClip#end()
 endfunction
 
-function! fauxClip#paste(X_reg)
-    if a:X_reg == "+"
+function! fauxClip#paste(REG)
+    if a:REG == "+"
         return system(g:fauxClip_paste_cmd)
     else
         return system(g:fauxClip_paste_primary_cmd)
@@ -39,7 +39,7 @@ function! fauxClip#end()
         autocmd!
     augroup END
     call setreg('"', s:reg)
-    unlet! s:reg s:X_reg
+    unlet! s:reg s:REG
 endfunction
 
 function! fauxClip#cmd_wrapper()

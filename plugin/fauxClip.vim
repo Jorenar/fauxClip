@@ -1,13 +1,7 @@
 " fauxClip - Clipboard support without +clipboard
 " Maintainer:  Jorengarenar <https://joren.ga>
 
-" Init, variables {{{1
-
-if has("clipboard")
-    finish
-endif
-
-if exists('g:loaded_fauxClip')
+if has("clipboard") || exists('g:loaded_fauxClip')
     finish
 endif
 
@@ -29,8 +23,6 @@ endif
 
 autocmd CmdlineLeave : if getcmdline() =~ "[dy].*[+*]" | call fauxClip#cmd_wrapper() | endif
 
-" Mappings {{{1
-
 nnoremap <expr> "* fauxClip#start("*")
 nnoremap <expr> "+ fauxClip#start("+")
 
@@ -47,6 +39,6 @@ noremap! <C-r><C-r>*  <C-r><C-r>=fauxClip#paste("*")<CR>
 noremap! <C-r><C-o>*  <C-r><C-o>=fauxClip#paste("*")<CR>
 inoremap <C-r><C-p>*  <C-r><C-p>=fauxClip#paste("*")<CR>
 
-" End "{{{1
 let g:loaded_fauxClip = 1
+
 " vim: fdm=marker fen
