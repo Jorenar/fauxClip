@@ -1,0 +1,48 @@
+*fauxClip.txt*   Clipboard support for Vim without +clipboard
+
+Author:  Jorengarenar                                        *fauxClip-author*
+
+This plugin is only available if 'compatible' is not set and no |+clipboard|
+support.
+
+==============================================================================
+                                                                    *fauxClip*
+
+fauxClip is a Vim plugin to provide a pseudo clipboard support for versions of
+Vim compiled without +clipboard
+
+==============================================================================
+
+fauxClip customization                             *fauxClip-customization*
+
+fuaxClip will need both a copy command and paste command in order to mimimic
+clipboard support.
+
+
+Primary Clipboard                                         *fauxClip-quotestar*
+
+Copy Command:
+
+  let g:fauxClip_copy_primary_cmd = 'xclip -f -i'
+
+Paste Command:
+
+  let g:fauxClip_paste_primary_cmd = 'xclip -o 2> /dev/null'
+
+
+
+X11 Selection                           *fauxClip-quoteplus* *fauxClip-quote+*
+
+Copy Command:
+
+  let g:fauxClip_copy_cmd = 'xclip -f -i -selection clipboard'
+
+
+Paste Command:
+
+  let g:fauxClip_paste_cmd = 'xclip -o -selection clipboard 2> /dev/null'
+
+
+==============================================================================
+
+ vim:tw=78:ts=8:ft=help:norl:
