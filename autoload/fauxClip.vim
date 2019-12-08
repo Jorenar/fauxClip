@@ -10,9 +10,9 @@ function! fauxClip#start(REG)
     augroup fauxClip
         autocmd!
         if exists('##TextYankPost')
-            autocmd TextYankPost * if v:event.regname == '"' | call fauxClip#yank(v:event.regcontents, s:REG) | endif
+            autocmd TextYankPost * if v:event.regname == '"' | call fauxClip#yank(v:event.regcontents) | endif
         else
-            autocmd CursorMoved  * if @@ != s:reg | call fauxClip#yank(@@, s:REG) | endif
+            autocmd CursorMoved  * if @@ != s:reg | call fauxClip#yank(@@) | endif
         endif
         autocmd TextChanged  * call fauxClip#end()
     augroup END
@@ -20,8 +20,8 @@ function! fauxClip#start(REG)
     return '""'
 endfunction
 
-function! fauxClip#yank(content, REG)
-    if a:REG == "+"
+function! fauxClip#yank(content)
+    if s:REG == "+"
         call system(g:fauxClip_copy_cmd, a:content)
     else
         call system(g:fauxClip_copy_primary_cmd, a:content)
@@ -43,19 +43,16 @@ function! fauxClip#end()
         autocmd!
     augroup END
     call setreg('"', s:reg[0], s:reg[1])
-    unlet! s:reg s:regtype s:REG
+    unlet! s:reg s:REG
 endfunction
 
-function! fauxClip#cmd(cmd, reg) range
-    let range = a:firstline . ',' . a:lastline
-    call fauxClip#start(a:reg)
-    execute range . a:cmd
-    if !exists('##TextYankPost')
-        doautocmd CursorMoved
-    endif
+function! fauxClip#cmd(cmd, REG) range
+    let s:REG = a:REG
+    let s:reg = [getreg('"'), getregtype('"')]
+    execute a:firstline . ',' . a:lastline . a:cmd
+    call fauxClip#yank(getreg('"'))
 endfunction
 
 function! fauxClip#cmd_wrapper()
-    let cmd = substitute(getcmdline(), '\<\(y\%[ank]\|d\%[elete]\|pu\%[t]!\?\)\s*\([+*]\)', 'call fauxClip#cmd(''\1'', ''\2'')', 'g')
-    execute cmd
+    execute substitute(getcmdline(), '\<\(y\%[ank]\|d\%[elete]\|pu\%[t]!\?\)\s*\([+*]\)', 'call fauxClip#cmd(''\1'', ''\2'')', 'g')
 endfunction
