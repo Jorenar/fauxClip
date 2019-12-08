@@ -1,7 +1,7 @@
 " fauxClip - Clipboard support without +clipboard
 " Maintainer:  Jorengarenar <https://joren.ga>
 
-if &cp || has("clipboard") || exists('g:loaded_fauxClip') || !exists('##TextYankPost') || !exists('##TextChanged') || !exists('##CmdlineLeave')
+if &cp || has("clipboard") || exists('g:loaded_fauxClip') || !exists('##TextChanged') || !exists('##CmdlineLeave')
     finish
 endif
 
@@ -15,7 +15,7 @@ endif
 
 if !exists('g:fauxClip_paste_cmd')
     if executable('pbcopy')
-        let g:fauxClip_copy_cmd = 'pbpaste'
+        let g:fauxClip_paste_cmd = 'pbpaste'
     else
         let g:fauxClip_paste_cmd = 'xclip -o -selection clipboard 2> /dev/null'
     endif
@@ -23,7 +23,7 @@ endif
 
 if !exists('g:fauxClip_copy_primary_cmd')
     if executable('pbcopy')
-        let g:fauxClip_copy_cmd = 'pbcopy'
+        let g:fauxClip_copy_primary_cmd = 'pbcopy'
     else
         let g:fauxClip_copy_primary_cmd = 'xclip -f -i'
     endif
@@ -31,7 +31,7 @@ endif
 
 if !exists('g:fauxClip_paste_primary_cmd')
     if executable('pbcopy')
-        let g:fauxClip_copy_cmd = 'pbpaste'
+        let g:fauxClip_paste_primary_cmd = 'pbpaste'
     else
         let g:fauxClip_paste_primary_cmd = 'xclip -o 2> /dev/null'
     endif
