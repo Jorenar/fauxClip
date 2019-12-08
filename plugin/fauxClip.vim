@@ -21,7 +21,10 @@ if !exists('g:fauxClip_paste_primary_cmd')
     let g:fauxClip_paste_primary_cmd = 'xclip -o 2> /dev/null'
 endif
 
-autocmd CmdlineLeave : if getcmdline() =~ "[dy].*[+*]" | call fauxClip#cmd_wrapper() | endif
+augroup fauxClipCmdWrapper
+  autocmd!
+  autocmd CmdlineLeave : if getcmdline() =~ "[dy].*[+*]" | call fauxClip#cmd_wrapper() | endif
+augroup END
 
 nnoremap <expr> "* fauxClip#start("*")
 nnoremap <expr> "+ fauxClip#start("+")
