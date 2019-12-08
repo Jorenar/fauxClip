@@ -42,12 +42,10 @@ function! fauxClip#end()
     unlet! s:reg s:X_reg
 endfunction
 
-function! fauxClip#CR()
+function! fauxClip#cmd_wrapper()
     command! -bar -range -nargs=1 FauxClipY execute "<line1>,<line2>!".expand('<args>' == '*' ? g:fauxClip_copy_primary_cmd : g:fauxClip_copy_cmd)
     command! -bar -range -nargs=1 FauxClipD execute "<line1>,<line2>!".expand('<args>' == '*' ? g:fauxClip_copy_primary_cmd : g:fauxClip_copy_cmd) | silent! execute "<line1>,<line2>d _"
-    call histadd(":", getcmdline())
-    let g:fauxClip#CR_cmd = substitute(getcmdline(),
-                \ '\(y\|ya\|yank\?\|d\|de\|del\|dele\|delete\?\)\s*\([+\*]\)', '\="FauxClip".toupper(submatch(1)[0])." ".submatch(2)', 'g').
-                \ " | delc FauxClipY | delc FauxClipD | call histdel(':', g:fauxClip#CR_cmd) | unlet g:fauxClip#CR_cmd"
-    return g:fauxClip#CR_cmd
+    execute substitute(getcmdline(), '\(y\|ya\|yank\?\|d\|de\|del\|dele\|delete\?\)\s*\([+\*]\)', '\="FauxClip".toupper(submatch(1)[0])." ".submatch(2)', 'g')
+    setlocal nomodifiable
+    call timer_start(0, {-> execute("delc FauxClipY | delc FauxClipD | setlocal modifiable | redraw!")})
 endfunction

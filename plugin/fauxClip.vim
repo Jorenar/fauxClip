@@ -27,6 +27,8 @@ if !exists('g:fauxClip_paste_primary_cmd')
     let g:fauxClip_paste_primary_cmd = 'xclip -o 2> /dev/null'
 endif
 
+autocmd CmdlineLeave : if getcmdline() =~ "[dy].*[+*]" | call fauxClip#cmd_wrapper() | endif
+
 " Mappings {{{1
 
 nnoremap <expr> "* fauxClip#start("*")
@@ -44,8 +46,6 @@ noremap! <C-r>*       <C-r>=fauxClip#paste("*")<CR>
 noremap! <C-r><C-r>*  <C-r><C-r>=fauxClip#paste("*")<CR>
 noremap! <C-r><C-o>*  <C-r><C-o>=fauxClip#paste("*")<CR>
 inoremap <C-r><C-p>*  <C-r><C-p>=fauxClip#paste("*")<CR>
-
-cnoremap <expr> <CR> getcmdtype() == ':' && getcmdline() =~ "[dy].*[+*]" ? '<C-u>'.fauxClip#CR().'<CR>' : '<CR>'
 
 " End "{{{1
 let g:loaded_fauxClip = 1
