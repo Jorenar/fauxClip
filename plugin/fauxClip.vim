@@ -1,7 +1,7 @@
 " fauxClip - Clipboard support without +clipboard
 " Maintainer:  Jorengarenar <https://joren.ga>
 
-if &cp || has("clipboard") || exists('g:loaded_fauxClip') || !exists('##TextYankPost') || !exists('##TextChanged') || !exists('##CmdlineLeave')
+if &cp || has("clipboard") || exists('g:loaded_fauxClip') || !exists('##TextChanged') || !exists('##CmdlineLeave')
     finish
 endif
 

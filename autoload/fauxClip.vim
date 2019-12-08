@@ -10,7 +10,11 @@ function! fauxClip#start(REG)
 
     augroup fauxClip
         autocmd!
-        autocmd TextYankPost * if v:event.regname == '"' | call fauxClip#yank(v:event.regcontents, s:REG) | endif
+        if exists('##TextYankPost')
+              autocmd TextYankPost * if v:event.regname == '"' | call fauxClip#yank(v:event.regcontents, s:REG) | endif
+          else
+              autocmd CursorMoved  * if @@ != s:reg | call fauxClip#yank(@@, s:REG) | endif
+        endif
         autocmd TextChanged  * call fauxClip#end()
     augroup END
 
