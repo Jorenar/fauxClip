@@ -55,4 +55,6 @@ endfunction
 
 function! fauxClip#cmd_wrapper()
     execute substitute(getcmdline(), '\<\(y\%[ank]\|d\%[elete]\|pu\%[t]!\?\)\s*\([+*]\)', 'call fauxClip#cmd(''\1'', ''\2'')', 'g')
+    setlocal nomodifiable
+    call timer_start(0, {-> execute("setlocal modifiable | redraw!")})
 endfunction
