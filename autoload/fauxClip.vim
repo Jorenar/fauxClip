@@ -51,9 +51,12 @@ function! fauxClip#cmd(cmd, reg) range
     let range = a:firstline . ',' . a:lastline
     call fauxClip#start(a:reg)
     execute range . a:cmd
+    if !exists('##TextYankPost')
+        doautocmd CursorMoved
+    endif
 endfunction
 
 function! fauxClip#cmd_wrapper()
-    let cmd = substitute(getcmdline(), '\<\(y\%[ank]\|d\%[elete]\|p\%[ut]!\?\)\s*\([+*]\)', 'call fauxClip#cmd(''\1'', ''\2'')', 'g')
+    let cmd = substitute(getcmdline(), '\<\(y\%[ank]\|d\%[elete]\|pu\%[t]!\?\)\s*\([+*]\)', 'call fauxClip#cmd(''\1'', ''\2'')', 'g')
     execute cmd
 endfunction
