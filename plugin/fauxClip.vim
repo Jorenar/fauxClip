@@ -38,8 +38,8 @@ if !exists('g:fauxClip_paste_primary_cmd')
 endif
 
 augroup fauxClipCmdWrapper
-  autocmd!
-  autocmd CmdlineLeave : if getcmdline() =~ "[dy].*[+*]" | call fauxClip#cmd_wrapper() | endif
+    autocmd!
+    autocmd CmdlineLeave : if getcmdline() =~ "[dy].*[+*]" | call fauxClip#cmd_wrapper() | endif
 augroup END
 
 nnoremap <expr> "* fauxClip#start("*")
