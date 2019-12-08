@@ -1,27 +1,46 @@
 " fauxClip - Clipboard support without +clipboard
 " Maintainer:  Jorengarenar <https://joren.ga>
 
-if has("clipboard") || exists('g:loaded_fauxClip')
+if &cp || has("clipboard") || exists('g:loaded_fauxClip') || !exists('##TextChanged') || !exists('##CmdlineLeave')
     finish
 endif
 
 if !exists('g:fauxClip_copy_cmd')
-    let g:fauxClip_copy_cmd = 'xclip -f -i -selection clipboard'
+    if executable('pbcopy')
+        let g:fauxClip_copy_cmd = 'pbcopy'
+    else
+        let g:fauxClip_copy_cmd = 'xclip -f -i -selection clipboard'
+    endif
 endif
 
 if !exists('g:fauxClip_paste_cmd')
-    let g:fauxClip_paste_cmd = 'xclip -o -selection clipboard 2> /dev/null'
+    if executable('pbcopy')
+        let g:fauxClip_paste_cmd = 'pbpaste'
+    else
+        let g:fauxClip_paste_cmd = 'xclip -o -selection clipboard 2> /dev/null'
+    endif
 endif
 
 if !exists('g:fauxClip_copy_primary_cmd')
-    let g:fauxClip_copy_primary_cmd = 'xclip -f -i'
+    if executable('pbcopy')
+        let g:fauxClip_copy_primary_cmd = 'pbcopy'
+    else
+        let g:fauxClip_copy_primary_cmd = 'xclip -f -i'
+    endif
 endif
 
 if !exists('g:fauxClip_paste_primary_cmd')
-    let g:fauxClip_paste_primary_cmd = 'xclip -o 2> /dev/null'
+    if executable('pbcopy')
+        let g:fauxClip_paste_primary_cmd = 'pbpaste'
+    else
+        let g:fauxClip_paste_primary_cmd = 'xclip -o 2> /dev/null'
+    endif
 endif
 
-autocmd CmdlineLeave : if getcmdline() =~ "[dy].*[+*]" | call fauxClip#cmd_wrapper() | endif
+augroup fauxClipCmdWrapper
+    autocmd!
+    autocmd CmdlineLeave : if getcmdline() =~# '[dyp]\w*\s*[+*]' | call fauxClip#cmd_wrapper() | endif
+augroup END
 
 nnoremap <expr> "* fauxClip#start("*")
 nnoremap <expr> "+ fauxClip#start("+")

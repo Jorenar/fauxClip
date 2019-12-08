@@ -4,13 +4,18 @@
 function! fauxClip#start(REG)
     let s:REG = a:REG
     let s:reg = getreg('"')
+    let s:regtype = getregtype('"')
 
     let @@ = fauxClip#paste(s:REG)
 
     augroup fauxClip
         autocmd!
-        autocmd TextYankPost * ++once if v:event.regname == '"' | call fauxClip#yank(v:event.regcontents, s:REG) | endif
-        autocmd TextChanged  * ++once call fauxClip#end()
+        if exists('##TextYankPost')
+              autocmd TextYankPost * if v:event.regname == '"' | call fauxClip#yank(v:event.regcontents, s:REG) | endif
+          else
+              autocmd CursorMoved  * if @@ != s:reg | call fauxClip#yank(@@, s:REG) | endif
+        endif
+        autocmd TextChanged  * call fauxClip#end()
     augroup END
 
     return '""'
@@ -38,14 +43,20 @@ function! fauxClip#end()
     augroup fauxClip
         autocmd!
     augroup END
-    call setreg('"', s:reg)
-    unlet! s:reg s:REG
+    call setreg('"', s:reg, s:regtype)
+    unlet! s:reg s:regtype s:REG
+endfunction
+
+function! fauxClip#cmd(cmd, reg) range
+    let range = a:firstline . ',' . a:lastline
+    call fauxClip#start(a:reg)
+    execute range . a:cmd
+    if !exists('##TextYankPost')
+        doautocmd CursorMoved
+    endif
 endfunction
 
 function! fauxClip#cmd_wrapper()
-    command! -bar -range -nargs=1 FauxClipY execute "<line1>,<line2>!".expand('<args>' == '*' ? g:fauxClip_copy_primary_cmd : g:fauxClip_copy_cmd) | if &mod | undo | endif
-    command! -bar -range -nargs=1 FauxClipD execute "<line1>,<line2>!".expand('<args>' == '*' ? g:fauxClip_copy_primary_cmd : g:fauxClip_copy_cmd) | execute "<line1>,<line2>d _"
-    execute substitute(getcmdline(), '\(y\|ya\|yank\?\|d\|de\|del\|dele\|delete\?\)\s*\([+\*]\)', '\="FauxClip".toupper(submatch(1)[0])." ".submatch(2)', 'g')
-    setlocal nomodifiable
-    call timer_start(0, {-> execute("delc FauxClipY | delc FauxClipD | setlocal modifiable | redraw!")})
+    let cmd = substitute(getcmdline(), '\<\(y\%[ank]\|d\%[elete]\|pu\%[t]!\?\)\s*\([+*]\)', 'call fauxClip#cmd(''\1'', ''\2'')', 'g')
+    execute cmd
 endfunction
