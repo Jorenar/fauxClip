@@ -3,17 +3,16 @@
 
 function! fauxClip#start(REG)
     let s:REG = a:REG
-    let s:reg = getreg('"')
-    let s:regtype = getregtype('"')
+    let s:reg = [getreg('"'), getregtype('"')]
 
     let @@ = fauxClip#paste(s:REG)
 
     augroup fauxClip
         autocmd!
         if exists('##TextYankPost')
-              autocmd TextYankPost * if v:event.regname == '"' | call fauxClip#yank(v:event.regcontents, s:REG) | endif
-          else
-              autocmd CursorMoved  * if @@ != s:reg | call fauxClip#yank(@@, s:REG) | endif
+            autocmd TextYankPost * if v:event.regname == '"' | call fauxClip#yank(v:event.regcontents, s:REG) | endif
+        else
+            autocmd CursorMoved  * if @@ != s:reg | call fauxClip#yank(@@, s:REG) | endif
         endif
         autocmd TextChanged  * call fauxClip#end()
     augroup END
@@ -43,7 +42,7 @@ function! fauxClip#end()
     augroup fauxClip
         autocmd!
     augroup END
-    call setreg('"', s:reg, s:regtype)
+    call setreg('"', s:reg[0], s:reg[1])
     unlet! s:reg s:regtype s:REG
 endfunction
 
