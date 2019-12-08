@@ -49,8 +49,13 @@ endfunction
 function! fauxClip#cmd(cmd, REG) range
     let s:REG = a:REG
     let s:reg = [getreg('"'), getregtype('"')]
-    execute a:firstline . ',' . a:lastline . a:cmd
-    call fauxClip#yank(getreg('"'))
+    if a:cmd =~# 'pu\%[t]'
+        execute a:firstline . ',' . a:lastline . a:cmd ."=fauxClip#paste(s:REG)"
+        call fauxClip#end()
+    else
+        execute a:firstline . ',' . a:lastline . a:cmd
+        call fauxClip#yank(getreg('"'))
+    endif
 endfunction
 
 function! fauxClip#cmd_wrapper()
