@@ -45,15 +45,7 @@ noremap! <C-r><C-r>*  <C-r><C-r>=fauxClip#paste("*")<CR>
 noremap! <C-r><C-o>*  <C-r><C-o>=fauxClip#paste("*")<CR>
 inoremap <C-r><C-p>*  <C-r><C-p>=fauxClip#paste("*")<CR>
 
-" Commands {{{1
-
-command -range -nargs=1 Y execute "<line1>,<line2>!".expand('<args>' == '*' ? g:fauxClip_copy_primary_cmd : g:fauxClip_copy_cmd)
-command -range -nargs=1 D execute "<line1>,<line2>!".expand('<args>' == '*' ? g:fauxClip_copy_primary_cmd : g:fauxClip_copy_cmd) | silent! execute "<line1>,<line2>d _"
-
-cmap <expr> d* getcmdtype() == ':' ? 'D *' : 'd*'
-cmap <expr> d+ getcmdtype() == ':' ? 'D +' : 'd+'
-cmap <expr> y* getcmdtype() == ':' ? 'Y *' : 'y*'
-cmap <expr> y+ getcmdtype() == ':' ? 'Y +' : 'y+'
+cnoremap <expr> <CR> getcmdtype() == ':' && getcmdline() =~ "[dy].*[+*]" ? '<C-u>'.fauxClip#CR().'<CR>' : '<CR>'
 
 " End "{{{1
 let g:loaded_fauxClip = 1
