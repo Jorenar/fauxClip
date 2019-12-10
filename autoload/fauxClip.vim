@@ -58,8 +58,22 @@ function! fauxClip#cmd(cmd, REG) range
     endif
 endfunction
 
-function! fauxClip#cmd_wrapper()
-    execute substitute(getcmdline(), '\<\(y\%[ank]\|d\%[elete]\|pu\%[t]!\?\)\s*\([+*]\)', 'call fauxClip#cmd(''\1'', ''\2'')', 'g')
-    setlocal nomodifiable
-    call timer_start(0, {-> execute("setlocal modifiable | redraw!")})
+function! fauxClip#restore_CR()
+    if !empty(g:CR_old)
+        let CR_remap  = g:CR_old["noremap"] ? "cnoremap " : "cmap "
+        let CR_remap .= g:CR_old["silent"]  ? "<silent> " : ""
+        let CR_remap .= g:CR_old["nowait"]  ? "<nowait> " : ""
+        let CR_remap .= g:CR_old["expr"]    ? "<expr> "   : ""
+        let CR_remap .= g:CR_old["buffer"]  ? "<buffer> " : ""
+        let CR_remap .= g:CR_old["lhs"]." ".g:CR_old["rhs"]
+        execute CR_remap
+    else
+        cunmap <CR>
+    endif
+    unlet g:CR_old
+endfunction
+
+function! fauxClip#CR()
+    call histadd(":", getcmdline())
+    return substitute(getcmdline(), '\<\(y\%[ank]\|d\%[elete]\|pu\%[t]!\?\)\s*\([+*]\)', 'call fauxClip#cmd(''\1'', ''\2'')', 'g') . " | call histdel(':', -1)"
 endfunction
