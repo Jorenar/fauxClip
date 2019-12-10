@@ -59,7 +59,9 @@ function! fauxClip#cmd(cmd, REG) range
 endfunction
 
 function! fauxClip#restore_CR()
-    if !empty(g:CR_old)
+    if empty(g:CR_old)
+        cunmap <CR>
+    else
         let CR_remap  = g:CR_old["noremap"] ? "cnoremap " : "cmap "
         let CR_remap .= g:CR_old["silent"]  ? "<silent> " : ""
         let CR_remap .= g:CR_old["nowait"]  ? "<nowait> " : ""
@@ -67,8 +69,6 @@ function! fauxClip#restore_CR()
         let CR_remap .= g:CR_old["buffer"]  ? "<buffer> " : ""
         let CR_remap .= g:CR_old["lhs"]." ".g:CR_old["rhs"]
         execute CR_remap
-    else
-        cunmap <CR>
     endif
     unlet g:CR_old
 endfunction

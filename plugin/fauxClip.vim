@@ -5,36 +5,22 @@ if &cp || has("clipboard") || exists('g:loaded_fauxClip') || !exists('##TextChan
     finish
 endif
 
+let is_pbcopy = executable('pbcopy')
+
 if !exists('g:fauxClip_copy_cmd')
-    if executable('pbcopy')
-        let g:fauxClip_copy_cmd = 'pbcopy'
-    else
-        let g:fauxClip_copy_cmd = 'xclip -f -i -selection clipboard'
-    endif
+    let g:fauxClip_copy_cmd = is_pbcopy ? 'pbcopy' : 'xclip -f -i -selection clipboard'
 endif
 
 if !exists('g:fauxClip_paste_cmd')
-    if executable('pbcopy')
-        let g:fauxClip_paste_cmd = 'pbpaste'
-    else
-        let g:fauxClip_paste_cmd = 'xclip -o -selection clipboard 2> /dev/null'
-    endif
+    let g:fauxClip_paste_cmd = is_pbcopy ? 'pbpaste' : 'xclip -o -selection clipboard 2> /dev/null'
 endif
 
 if !exists('g:fauxClip_copy_primary_cmd')
-    if executable('pbcopy')
-        let g:fauxClip_copy_primary_cmd = 'pbcopy'
-    else
-        let g:fauxClip_copy_primary_cmd = 'xclip -f -i'
-    endif
+    let g:fauxClip_copy_primary_cmd = is_pbcopy ? 'pbcopy' : 'xclip -f -i'
 endif
 
 if !exists('g:fauxClip_paste_primary_cmd')
-    if executable('pbcopy')
-        let g:fauxClip_paste_primary_cmd = 'pbpaste'
-    else
-        let g:fauxClip_paste_primary_cmd = 'xclip -o 2> /dev/null'
-    endif
+    let g:fauxClip_paste_primary_cmd = is_pbcopy ? 'pbpaste' : 'xclip -o 2> /dev/null'
 endif
 
 augroup fauxClipCmdWrapper
