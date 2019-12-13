@@ -1,9 +1,11 @@
 " fauxClip - Clipboard support without +clipboard
 " Maintainer:  Jorengarenar <https://joren.ga>
 
-if &cp || has("clipboard") || exists('g:loaded_fauxClip') || !exists('##TextChanged') || !exists('##CmdlineLeave')
+if has("clipboard") || exists('g:loaded_fauxClip') || !has('patch1206')
     finish
 endif
+
+let s:cpo_save = &cpo | set cpo&vim
 
 let is_pbcopy = executable('pbcopy')
 
@@ -49,5 +51,7 @@ noremap! <C-r><C-o>*  <C-r><C-o>=fauxClip#paste("*")<CR>
 inoremap <C-r><C-p>*  <C-r><C-p>=fauxClip#paste("*")<CR>
 
 let g:loaded_fauxClip = 1
+
+let &cpo = s:cpo_save | unlet s:cpo_save
 
 " vim: fdm=marker fen
