@@ -9,7 +9,7 @@ versions of Vim compiled without _+clipboard_
 **fauxClip** uses _xclip_ as default copy and paste command, but you can
 override either of these commands if you have more specific needs.
 
-(The following examples utilize defaults)
+(The following examples Linux's utilize defaults)
 
 * Copy:
 ``` vim
