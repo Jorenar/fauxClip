@@ -27,7 +27,7 @@ endif
 
 augroup fauxClipCmdWrapper
     autocmd!
-    autocmd CmdlineChanged : if getcmdline() =~# '[dyp]\w*!\?\s*[+*]'
+    autocmd CmdlineChanged : if getcmdline() =~# '\(y\%[ank]\|d\%[elete]\|pu\%[t]!\?\)\s*[+*]'
                 \| let g:CR_old = maparg('<CR>', 'c', '', 1)
                 \| cnoremap <expr> <silent> <CR> getcmdline() =~# '[dyp]\w*!\?\s*[+*]' ? '<C-u>'.fauxClip#CR().'<CR>' : '<CR>'
                 \| elseif exists('g:CR_old') | call fauxClip#restore_CR() | endif

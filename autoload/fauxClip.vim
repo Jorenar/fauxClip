@@ -75,5 +75,5 @@ endfunction
 
 function! fauxClip#CR()
     call histadd(":", getcmdline())
-    return substitute(getcmdline(), '\<\(y\%[ank]\|d\%[elete]\|pu\%[t]!\?\)\s*\([+*]\)', 'call fauxClip#cmd(''\1'', ''\2'')', 'g') . " | call histdel(':', -1)"
+    return substitute(getcmdline(), '\(y\%[ank]\|d\%[elete]\|pu\%[t]!\?\)\s*\([+*]\)', 'call fauxClip#cmd(''\1'', ''\2'')', 'g') . " | call histdel(':', -1)"
 endfunction
