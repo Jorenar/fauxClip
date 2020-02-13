@@ -20,19 +20,31 @@ elseif s:is_clipExe
 endif
 
 if !exists('g:fauxClip_copy_cmd')
-  let g:fauxClip_copy_cmd = s:fall_to_xclip ? 'xclip -f -i -selection clipboard' : s:copy_alt
+  let g:fauxClip_copy_cmd = s:fall_to_xclip ? "xclip -f -i -selection clipboard" : s:copy_alt
 endif
 
 if !exists('g:fauxClip_paste_cmd')
-  let g:fauxClip_paste_cmd = s:fall_to_xclip ? 'xclip -o -selection clipboard 2> /dev/null' : s:paste_alt
+  let g:fauxClip_paste_cmd = s:fall_to_xclip ? "xclip -o -selection clipboard" : s:paste_alt
 endif
 
 if !exists('g:fauxClip_copy_primary_cmd')
-  let g:fauxClip_copy_primary_cmd = s:fall_to_xclip ? 'xclip -f -i' : s:copy_alt
+  let g:fauxClip_copy_primary_cmd = s:fall_to_xclip ? "xclip -f -i" : s:copy_alt
 endif
 
 if !exists('g:fauxClip_paste_primary_cmd')
-  let g:fauxClip_paste_primary_cmd = s:fall_to_xclip ? 'xclip -o 2> /dev/null' : s:paste_alt
+  let g:fauxClip_paste_primary_cmd = s:fall_to_xclip ? "xclip -o" : s:paste_alt
+endif
+
+if get(g:, fauxClip_suppress_errors, 1)
+  if s:is_clipExe
+    let s:null = " 2> NUL"
+  else
+    let s:null = " 2> /dev/null"
+  endif
+  let g:fauxClip_copy_cmd          .= s:null
+  let g:fauxClip_paste_cmd         .= s:null
+  let g:fauxClip_copy_primary_cmd  .= s:null
+  let g:fauxClip_paste_primary_cmd .= s:null
 endif
 
 augroup fauxClipCmdWrapper

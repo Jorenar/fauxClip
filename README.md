@@ -24,6 +24,14 @@ let g:fauxClip_copy_primary_cmd = 'xclip -f -i'
 ```
 * Paste:
 ``` vim
-let g:fauxClip_paste_cmd         = 'xclip -o -selection clipboard 2> /dev/null'
-let g:fauxClip_paste_primary_cmd = 'xclip -o 2> /dev/null'
+let g:fauxClip_paste_cmd         = 'xclip -o -selection clipboard'
+let g:fauxClip_paste_primary_cmd = 'xclip -o'
+```
+
+---
+
+If you for some reasons don't want to suppress error messages from clipboard
+command (e.g. `xclip`'s empty clipboard), then:
+```vim
+let g:fauxClip_suppress_errors = 0
 ```
