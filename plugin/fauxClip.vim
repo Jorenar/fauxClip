@@ -1,14 +1,14 @@
 " fauxClip - Clipboard support without +clipboard
 " Maintainer:  Jorengarenar <https://joren.ga>
 
-if has("clipboard") || exists('g:loaded_fauxClip') || !exists('##CmdlineLeave')
+if has("clipboard") || exists("g:loaded_fauxClip") || !exists("##CmdlineLeave")
   finish
 endif
 
 let s:cpo_save = &cpo | set cpo&vim
 
-let s:is_pbcopy     = executable('pbcopy')
-let s:is_clipExe    = executable('clip.exe')
+let s:is_pbcopy     = executable("pbcopy")
+let s:is_clipExe    = executable("clip.exe")
 let s:fall_to_xclip = !(s:is_pbcopy || s:is_clipExe)
 
 if s:is_pbcopy
@@ -19,23 +19,23 @@ elseif s:is_clipExe
   let s:paste_alt = "paste.exe"
 endif
 
-if !exists('g:fauxClip_copy_cmd')
+if !exists("g:fauxClip_copy_cmd")
   let g:fauxClip_copy_cmd = s:fall_to_xclip ? "xclip -f -i -selection clipboard" : s:copy_alt
 endif
 
-if !exists('g:fauxClip_paste_cmd')
+if !exists("g:fauxClip_paste_cmd")
   let g:fauxClip_paste_cmd = s:fall_to_xclip ? "xclip -o -selection clipboard" : s:paste_alt
 endif
 
-if !exists('g:fauxClip_copy_primary_cmd')
+if !exists("g:fauxClip_copy_primary_cmd")
   let g:fauxClip_copy_primary_cmd = s:fall_to_xclip ? "xclip -f -i" : s:copy_alt
 endif
 
-if !exists('g:fauxClip_paste_primary_cmd')
+if !exists("g:fauxClip_paste_primary_cmd")
   let g:fauxClip_paste_primary_cmd = s:fall_to_xclip ? "xclip -o" : s:paste_alt
 endif
 
-if get(g:, fauxClip_suppress_errors, 1)
+if get(g:, "fauxClip_suppress_errors", 1)
   if s:is_clipExe
     let s:null = " 2> NUL"
   else
