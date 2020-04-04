@@ -1,7 +1,11 @@
 " fauxClip - Clipboard support without +clipboard
 " Maintainer:  Jorengarenar <https://joren.ga>
 
-if has("clipboard") || exists("g:loaded_fauxClip") || !exists("##CmdlineLeave")
+if exists("g:loaded_fauxClip") || !exists("##CmdlineLeave")
+  finish
+endif
+
+if has("clipboard") && !get(g:, "fauxClip_always_use", 0)
   finish
 endif
 
