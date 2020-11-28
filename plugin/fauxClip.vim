@@ -53,9 +53,9 @@ endif
 
 augroup fauxClipCmdWrapper
   autocmd!
-  autocmd CmdlineChanged : if getcmdline() =~# '\(y\%[ank]\|d\%[elete]\|pu\%[t]!\?\)\s*[+*]'
+  autocmd CmdlineChanged : if getcmdline() =~# fauxClip#cmd_pattern()
         \| let g:CR_old = maparg('<CR>', 'c', '', 1)
-        \| cnoremap <expr> <silent> <CR> getcmdline() =~# '[dyp]\w*!\?\s*[+*]' ? '<C-u>'.fauxClip#CR().'<CR>' : '<CR>'
+        \| cnoremap <expr> <silent> <CR> getcmdline() =~# fauxClip#cmd_pattern() ? '<C-u>'.fauxClip#CR().'<CR>' : '<CR>'
         \| elseif exists('g:CR_old') | call fauxClip#restore_CR() | endif
   autocmd CmdlineLeave : if exists('g:CR_old') | call fauxClip#restore_CR() | endif
 augroup END
@@ -77,5 +77,4 @@ noremap! <C-r><C-o>*  <C-r><C-o>=fauxClip#paste("*")<CR>
 inoremap <C-r><C-p>*  <C-r><C-p>=fauxClip#paste("*")<CR>
 
 let g:loaded_fauxClip = 1
-
 let &cpo = s:cpo_save | unlet s:cpo_save

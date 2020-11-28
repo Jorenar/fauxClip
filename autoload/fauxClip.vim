@@ -62,20 +62,24 @@ function! fauxClip#restore_CR()
   if empty(g:CR_old)
     cunmap <CR>
   else
-    let CR_remap  = g:CR_old["noremap"] ? "cnoremap " : "cmap "
-    let CR_remap .= g:CR_old["silent"]  ? "<silent> " : ""
-    let CR_remap .= g:CR_old["nowait"]  ? "<nowait> " : ""
-    let CR_remap .= g:CR_old["expr"]    ? "<expr> "   : ""
-    let CR_remap .= g:CR_old["buffer"]  ? "<buffer> " : ""
-    let CR_remap .= g:CR_old["lhs"]." ".g:CR_old["rhs"]
-    execute CR_remap
+    execute   (g:CR_old["noremap"] ? "cnoremap " : "cmap ")
+          \ . (g:CR_old["silent"]  ? "<silent> " : "")
+          \ . (g:CR_old["nowait"]  ? "<nowait> " : "")
+          \ . (g:CR_old["expr"]    ? "<expr> "   : "")
+          \ . (g:CR_old["buffer"]  ? "<buffer> " : "")
+          \ . g:CR_old["lhs"]." ".g:CR_old["rhs"]
   endif
   unlet g:CR_old
 endfunction
 
-function! fauxClip#CR()
-  call histadd(":", getcmdline())
-  return substitute(getcmdline(), '\(y\%[ank]\|d\%[elete]\|pu\%[t]!\?\)\s*\([+*]\)', 'call fauxClip#cmd(''\1'', ''\2'')', 'g') . " | call histdel(':', -1)"
+function! fauxClip#cmd_pattern()
+  return '\v%(%(^|\|)\s*%(\%|\d\,\d|' . "'\\<\\,'\\>" . ')?\s*)@<=(y%[ank]|d%[elete]|pu%[t]!?)\s*([+*])'
 endfunction
 
-" vim: fen
+function! fauxClip#CR()
+  call histadd(":", getcmdline())
+  return substitute(getcmdline(),
+        \ fauxClip#cmd_pattern(),
+        \ 'call fauxClip#cmd(''\1'', ''\2'')', 'g')
+        \ . " | call histdel(':', -1)"
+endfunction
