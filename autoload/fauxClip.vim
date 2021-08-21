@@ -1,5 +1,5 @@
 " fauxClip - Clipboard support without +clipboard
-" Maintainer:  Jorengarenar <https://joren.ga>
+" Maintainer:  Jorengarenar <dev@joren.ga>
 
 function! fauxClip#start(REG)
   let s:REG = a:REG
@@ -77,6 +77,7 @@ function! fauxClip#cmd_pattern()
 endfunction
 
 function! fauxClip#CR()
+  call fauxClip#restore_CR()
   call histadd(":", getcmdline())
   return substitute(getcmdline(),
         \ fauxClip#cmd_pattern(),
