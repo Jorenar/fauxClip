@@ -27,7 +27,7 @@ Copy Command:
 
 Paste Command:
 
-  let g:fauxClip_paste_primary_cmd = 'xclip -o 2> /dev/null'
+  let g:fauxClip_paste_primary_cmd = 'xclip -o'
 
 
 
@@ -40,7 +40,7 @@ Copy Command:
 
 Paste Command:
 
-  let g:fauxClip_paste_cmd = 'xclip -o -selection clipboard 2> /dev/null'
+  let g:fauxClip_paste_cmd = 'xclip -o -selection clipboard'
 
 
 ==============================================================================
