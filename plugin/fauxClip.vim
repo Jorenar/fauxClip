@@ -17,7 +17,7 @@ if s:is_pbcopy
   let s:paste_alt = "pbpaste"
 elseif s:is_clipExe
   let s:copy_alt  = "clip.exe"
-  let s:paste_alt = "paste.exe"
+  let s:paste_alt = "powershell.exe Get-Clipboard"
 endif
 
 if !exists("g:fauxClip_copy_cmd")
