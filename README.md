@@ -10,7 +10,7 @@ versions of Vim compiled without _+clipboard_
 
 * `xclip`
 * `pbcopy` / `pbpaste`
-* `clip.exe` / `paste.exe`
+* `clip.exe` / `powershell.exe Get-Clipboard`
 
 as default copy and paste command, but you can
 override either of these commands if you have more specific needs.
