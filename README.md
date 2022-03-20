@@ -8,14 +8,14 @@ versions of Vim compiled without _+clipboard_
 
 **fauxClip** uses
 
-* `xclip`
+* `xclip` (or `xsel` as fallback)
 * `pbcopy` / `pbpaste`
 * `clip.exe` / `powershell.exe Get-Clipboard`
 
 as default copy and paste command, but you can
-override either of these commands if you have more specific needs.
+override either of these if you have more specific needs.
 
-<sub>(The following examples utilize Linux's defaults)</sub>
+<sub>(The following examples utilize defaults for Linux)</sub>
 
 * Copy:
 ``` vim
@@ -39,4 +39,27 @@ let g:fauxClip_suppress_errors = 0
 If Vim is compiled with _+clipboard_, but you want to use this plugin regardless, then:
 ```vim
 let g:fauxClip_always_use = 1
+```
+
+## Installation
+
+#### [minPlug](https://github.com/Jorengarenar/minPlug):
+```vim
+MinPlug Jorengarenar/fauxClip
+```
+
+#### [vim-plug](https://github.com/junegunn/vim-plug):
+```vim
+Plug 'Jorengarenar/fauxClip'
+```
+
+#### Vim's packages
+```bash
+cd ~/.vim/pack/plugins/start
+git clone git://github.com/Jorengarenar/fauxClip.git
+```
+
+#### Single file
+```sh
+curl --create-dirs -L https://raw.githubusercontent.com/Jorengarenar/fauxClip/master/plugin/fauxClip.vim -o ~/.vim/plugin/fauxClip.vim
 ```
