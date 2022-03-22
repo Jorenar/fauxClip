@@ -19,6 +19,7 @@ function s:init() abort
           \   "copy": "clip.exe",
           \   "paste": "powershell.exe Get-Clipboard",
           \ }
+      let cmds["paste"] .= " | sed -Ez 's/\\r//g; $ s/\\n+$//'"
     elseif executable("pbcopy")
       let cmds = {
             \   "copy": "pbcopy",
