@@ -47,6 +47,17 @@ function s:init() abort
           \     "primary": "xclip -o",
           \   }
           \ }
+    elseif executable("wl-copy")
+      let cmds = {
+          \   "copy": {
+          \     "clipboard": "wl-copy",
+          \     "primary": "wl-copy --primary",
+          \   },
+          \   "paste": {
+          \     "clipboard": "wl-paste --no-newline",
+          \     "primary": "wl-paste --primary --no-newline",
+          \   }
+          \ }
     else
       echoerr "fauxClip: not all commands are set and could not find any of the default CLI program"
       return
