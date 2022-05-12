@@ -59,7 +59,10 @@ function s:init() abort
           \   }
           \ }
     else
-      echoerr "fauxClip: not all commands are set and could not find any of the default CLI program"
+      autocmd VimEnter * ++once
+            \  echohl ErrorMsg
+            \|  echo "fauxClip: not all commands are set and could not find any of the defaults"
+            \| echohl None
       return
     endif
 
