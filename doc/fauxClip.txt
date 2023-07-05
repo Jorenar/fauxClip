@@ -15,7 +15,7 @@ Vim compiled without +clipboard
 
 fauxClip customization                             *fauxClip-customization*
 
-fuaxClip will need both a copy command and paste command in order to mimimic
+fuaxClip will need both a copy command and paste command in order to mimic
 clipboard support.
 
 
@@ -41,6 +41,12 @@ Copy Command:
 Paste Command:
 
   let g:fauxClip_paste_cmd = 'xclip -o -selection clipboard'
+
+
+
+Tmux Integration                                               *fauxClip-tmux*
+
+  let g:fauxClip_tmux_reg = ']'
 
 
 ==============================================================================
