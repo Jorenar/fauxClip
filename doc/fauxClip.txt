@@ -8,46 +8,80 @@ support.
 ==============================================================================
                                                                     *fauxClip*
 
-fauxClip is a Vim plugin to provide a pseudo clipboard support for versions of
-Vim compiled without +clipboard
+fauxClip is a Vim plugin allowing to define custom registers, with primary
+goal of providing a pseudo clipboard support for versions of Vim compiled
+without +clipboard.
+
+Default utilities for clipboard yank and paste are:
+
+    `xclip`                                    (on Linux with X11, or on WSL)
+    `xsel`                                     (fallback to `xclip`)
+    `pbcopy` + `pbpaste`                         (on macOS)
+    `clip.exe` + `powershell.exe Get-Clipboard`  (on Windows)
+    `wl-copy` + `wl-paste`                       (on Linux with Wayland)
 
 ==============================================================================
 
-fauxClip customization                             *fauxClip-customization*
+fauxClip customization                                 *fauxClip-customization*
 
 fuaxClip will need both a copy command and paste command in order to mimic
 clipboard support.
 
+Primary Clipboard                                          *fauxClip-quotestar*
+X11 Selection                              *fauxClip-quoteplus* *fauxClip-quote+*
 
-Primary Clipboard                                         *fauxClip-quotestar*
+Assuming you are on Linux, useing Tmux, `xclip` is installed, and didn't
+change any of fauxClip's defaults, then the dictionary with commands for
+registers will be set as following:
+>
+  let g:fauxClip_regcmds = {
+        \   '+': {
+        \     'yank':  'xclip -f -i -selection clipboard',
+        \     'paste': 'xclip -o -selection clipboard',
+        \   },
+        \   '*': {
+        \     'yank':  'xclip -f -i',
+        \     'paste': 'xclip -o',
+        \   },
+        \   ']': {
+        \     'yank':  'tmux load-buffer -',
+        \     'paste': 'tmux save-buffer -',
+        \   }
+        \ }
+<
 
-Copy Command:
+By manually setting any of the items you can overwrite the defaults, or craft
+your own registers:
+>
+  let g:fauxClip_regcmds = {
+        \   '!': {
+        \     'paste': 'echo "Bang!"'
+        \   }
+        \ }
+<
 
-  let g:fauxClip_copy_primary_cmd = 'xclip -f -i'
-
-Paste Command:
-
-  let g:fauxClip_paste_primary_cmd = 'xclip -o'
-
-
-
-X11 Selection                           *fauxClip-quoteplus* *fauxClip-quote+*
-
-Copy Command:
-
-  let g:fauxClip_copy_cmd = 'xclip -f -i -selection clipboard'
+Note: To disable clipboard registers `*` and `+` you need to explicitly
+      set them to empty strings.
 
 
-Paste Command:
-
-  let g:fauxClip_paste_cmd = 'xclip -o -selection clipboard'
-
-
-
-Tmux Integration                                               *fauxClip-tmux*
-
+Tmux Integration                                                *fauxClip-tmux*
+To set different "register" for Tmux than `]`:
+>
   let g:fauxClip_tmux_reg = ']'
+<
 
+                                                               *fauxClip-force*
+If Vim is compiled with +clipboard, but you want to use custom commands
+regardless, then:
+>
+  let g:fauxClip_always_use = 1
+<
+stderr supression                                     *fauxClip-stderr-to-null*
+If for some reason you don't want to suppress error messages from clipboard
+command (e.g. `xclip`'s empty clipboard), then:
+>
+  let g:fauxClip_suppress_errors = 0
+<
 
 ==============================================================================
 

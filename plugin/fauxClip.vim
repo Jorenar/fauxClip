@@ -1,119 +1,97 @@
 " fauxClip - Clipboard support without +clipboard
-" Maintainer:  Jorengarenar <dev@joren.ga>
+" Author:  Jorengarenar <dev@jorenar.com>
 
 if exists("g:loaded_fauxClip") | finish | endif
-if has("clipboard") && !get(g:, "fauxClip_always_use", 0) | finish | endif
-
 let s:cpo_save = &cpo | set cpo&vim
 
-function s:init() abort
-  let settedCmds = 0
-  for v in [ "copy", "copy_primary", "paste", "paste_primary" ]
-    let settedCmds += exists("g:fauxClip_".v."_cmd")
-  endfor
+let s:regcmds = get(g:, "fauxClip_regcmds", {})
 
-  if settedCmds < 4
-    let cmds = {}
-    if $WSL2_GUI_APPS_ENABLED && (executable("xclip") || executable("xsel"))
-      if executable("xclip")
-        let cmds = {
-              \   "copy": "xclip -f -i -selection clipboard",
-              \   "paste": "xclip -o -selection clipboard",
-              \ }
-      elseif executable("xsel")
-        let cmds = {
-              \   "copy": "xsel -i -b",
-              \   "paste": "xsel -o -b",
-              \ }
-      endif
-    elseif executable("clip.exe")
-      let cmds = {
-            \   "copy": "clip.exe",
-            \   "paste": "powershell.exe Get-Clipboard",
-            \ }
-      let cmds["paste"] .= " | sed -Ez 's/\\r//g; $ s/\\n+$//'"
-    elseif executable("pbcopy")
-      let cmds = {
-            \   "copy": "pbcopy",
-            \   "paste": "pbpaste",
-            \ }
-    elseif executable("xclip")
-      let cmds = {
-            \   "copy": {
-            \     "clipboard": "xclip -f -i -selection clipboard",
-            \     "primary": "xclip -f -i",
-            \   },
-            \   "paste": {
-            \     "clipboard": "xclip -o -selection clipboard",
-            \     "primary": "xclip -o",
-            \   }
-            \ }
-    elseif executable("xsel")
-      let cmds = {
-            \   "copy": {
-            \     "clipboard": "xsel -i -b",
-            \     "primary": "xsel -i",
-            \   },
-            \   "paste": {
-            \     "clipboard": "xsel -o -b",
-            \     "primary": "xclip -o",
-            \   }
-            \ }
-    elseif executable("wl-copy")
-      let cmds = {
-            \   "copy": {
-            \     "clipboard": "wl-copy",
-            \     "primary": "wl-copy --primary",
-            \   },
-            \   "paste": {
-            \     "clipboard": "wl-paste --no-newline",
-            \     "primary": "wl-paste --primary --no-newline",
-            \   }
-            \ }
-    else
-      autocmd VimEnter * ++once
-            \  echohl ErrorMsg
-            \|  echo "fauxClip: not all commands are set and could not find any of the defaults"
-            \| echohl None
+function! s:set(reg, action, cmd) abort
+  if has_key(s:regcmds, a:reg)
+    if has_key(s:regcmds[a:reg], a:action)
       return
     endif
-
-    let copy = cmds["copy"]
-    let isStr = type(copy) == 1
-    if !exists("g:fauxClip_copy_cmd")
-      let g:fauxClip_copy_cmd = isStr ? copy : copy["clipboard"]
-      let settedCmds += 1
-    endif
-    if !exists("g:fauxClip_copy_primary_cmd")
-      let g:fauxClip_copy_primary_cmd = isStr ? copy : copy["primary"]
-      let settedCmds += 1
-    endif
-
-    let paste = cmds["paste"]
-    let isStr = type(paste) == 1
-    if !exists("g:fauxClip_paste_cmd")
-      let g:fauxClip_paste_cmd = isStr ? paste : paste["clipboard"]
-      let settedCmds += 1
-    endif
-    if !exists("g:fauxClip_paste_primary_cmd")
-      let g:fauxClip_paste_primary_cmd = isStr ? paste : paste["primary"]
-      let settedCmds += 1
-    endif
+  else
+    let s:regcmds[a:reg] = {}
   endif
-
-  if get(g:, "fauxClip_suppress_errors", 1)
-    let null = (executable("clip.exe") && !has("unix")) ? " 2> NUL" : " 2> /dev/null"
-    let g:fauxClip_copy_cmd          .= null
-    let g:fauxClip_paste_cmd         .= null
-    let g:fauxClip_copy_primary_cmd  .= null
-    let g:fauxClip_paste_primary_cmd .= null
-  endif
-
-  let s:tmux_reg = get(g:, "fauxClip_tmux_reg", ']')
+  let s:regcmds[a:reg][a:action] = a:cmd
 endfunction
-call s:init()
 
-" Runtime functions {{{
+if !has("clipboard") || get(g:, "fauxClip_always_use", 0)
+  if exists("g:fauxClip_copy_cmd")
+    call s:set("+", "yank", g:fauxClip_copy_cmd)
+  endif
+  if exists("g:fauxClip_paste_cmd")
+    call s:set("+", "paste", g:fauxClip_paste_cmd)
+  endif
+  if exists("g:fauxClip_copy_primary_cmd")
+    call s:set("*", "yank", g:fauxClip_copy_primary_cmd)
+  endif
+  if exists("g:fauxClip_paste_primary_cmd")
+    call s:set("*", "paste", g:fauxClip_paste_primary_cmd)
+  endif
+
+  if $WSL2_GUI_APPS_ENABLED && (executable("xclip") || executable("xsel"))
+    if executable("xclip")
+      call s:set("+", "yank",  "xclip -f -i -selection clipboard")
+      call s:set("+", "paste", "xclip -o -selection clipboard")
+    elseif executable("xsel")
+      call s:set("+", "yank",  "xsel -i -b")
+      call s:set("+", "paste", "xsel -o -b")
+    endif
+  elseif executable("clip.exe")
+    call s:set("+", "yank",  "clip.exe")
+    call s:set("+", "paste",
+          \    "powershell.exe Get-Clipboard"
+          \  . "| sed -Ez 's/\\r//g; $ s/\\n+$//'")
+  elseif executable("pbcopy")
+    call s:set("+", "yank",  "pbcopy")
+    call s:set("+", "paste", "pbpaste")
+  elseif executable("wl-copy")
+    call s:set("+", "yank", "wl-copy")
+    call s:set("*", "yank", "wl-copy --primary")
+    call s:set("+", "paste", "wl-paste --no-newline")
+    call s:set("*", "paste", "wl-paste --primary --no-newline")
+  elseif executable("xclip")
+    call s:set("+", "yank",  "xclip -f -i -selection clipboard")
+    call s:set("+", "paste", "xclip -o -selection clipboard")
+    call s:set("*", "yank",  "xclip -f -i")
+    call s:set("*", "paste", "xclip -o")
+  elseif executable("xsel")
+    call s:set("+", "yank",  "xsel -i -b")
+    call s:set("+", "paste", "xsel -o -b")
+    call s:set("*", "yank",  "xsel -i")
+    call s:set("*", "paste", "xsel -o")
+  else
+    autocmd VimEnter * ++once
+          \  echohl WarningMsg
+          \|  echo "fauxClip: not all commands are set and could not find any of the defaults"
+          \| echohl None
+  endif
+endif
+
+call s:set("*", "yank",  s:regcmds["+"]["yank"])
+call s:set("*", "paste", s:regcmds["+"]["paste"])
+
+let g:fauxClip_tmux_reg = get(g:, "fauxClip_tmux_reg", ']')
+if !empty(g:fauxClip_tmux_reg) && !empty($TMUX)
+  call s:set(g:fauxClip_tmux_reg, "yank",  "tmux load-buffer -")
+  call s:set(g:fauxClip_tmux_reg, "paste", "tmux save-buffer -")
+endif
+
+
+if get(g:, "fauxClip_suppress_errors", 1)
+  let s:null = (executable("clip.exe") && !has("unix")) ? " 2> NUL" : " 2> /dev/null"
+  for r in keys(s:regcmds)
+    if has_key(s:regcmds[r], "yank")
+      let s:regcmds[r]["yank"]  .= s:null
+    endif
+    if has_key(s:regcmds[r], "paste")
+      let s:regcmds[r]["paste"] .= s:null
+    endif
+  endfor | unlet r s:null
+endif
+
 
 function! s:start(REG) abort
   let s:REG = a:REG
@@ -134,28 +112,6 @@ function! s:start(REG) abort
   return '""'
 endfunction
 
-function! s:yank(content) abort
-  if s:REG == "+"
-    call system(g:fauxClip_copy_cmd, a:content)
-  elseif s:REG == "*"
-    call system(g:fauxClip_copy_primary_cmd, a:content)
-  elseif s:REG == s:tmux_reg
-    call system("tmux load-buffer -", a:content)
-  endif
-
-  call s:end()
-endfunction
-
-function! s:paste(REG) abort
-  if a:REG == "+"
-    return system(g:fauxClip_paste_cmd)
-  elseif a:REG == "*"
-    return system(g:fauxClip_paste_primary_cmd)
-  elseif a:REG == s:tmux_reg
-    return system("tmux save-buffer -")
-  endif
-endfunction
-
 function! s:end() abort
   augroup fauxClip
     autocmd!
@@ -165,7 +121,31 @@ function! s:end() abort
   redraw
 endfunction
 
-function! s:cmd(cmd, REG) abort range
+function! s:yank(content) abort
+  if has_key(s:regcmds[s:REG], "yank")
+    call system(s:regcmds[s:REG]["yank"], a:content)
+  endif
+  call s:end()
+endfunction
+
+function! s:paste(REG) abort
+  if has_key(s:regcmds[a:REG], "paste")
+    return system(s:regcmds[a:REG]["paste"])
+  endif
+endfunction
+
+for r in keys(s:regcmds)
+  exec 'nnoremap <expr> "'.r '<SID>start("'.r.'")'
+  exec 'vnoremap <expr> "'.r '<SID>start("'.r.'")'
+
+  exec 'noremap! <C-r>'.r       '<C-r>=<SID>paste("'.r.'")<CR>'
+  exec 'noremap! <C-r><C-r>'.r  '<C-r><C-r>=<SID>paste("'.r.'")<CR>'
+  exec 'noremap! <C-r><C-o>'.r  '<C-r><C-o>=<SID>paste("'.r.'")<CR>'
+  exec 'inoremap <C-r><C-p>'.r  '<C-r><C-p>=<SID>paste("'.r.'")<CR>'
+endfor | unlet r
+
+
+function! s:cli(cmd, REG) abort range
   let s:REG = a:REG
   let s:reg = [getreg('"'), getregtype('"')]
   if a:cmd =~# 'pu\%[t]'
@@ -177,57 +157,54 @@ function! s:cmd(cmd, REG) abort range
   endif
 endfunction
 
-function! s:restore_CR() abort
-  if empty(g:CR_old)
+function! s:cli_set_CR() abort
+  if !exists("s:CR_old") | let s:CR_old = maparg('<CR>', 'c', '', 1) | endif
+  cnoremap <expr> <silent> <CR> <SID>cli_check() ? '<C-u>'.<SID>cli_CR().'<CR>' : '<CR>'
+endfunction
+
+function! s:cli_restore_CR() abort
+  if empty(s:CR_old)
     cunmap <CR>
   else
-    execute   (g:CR_old["noremap"] ? "cnoremap " : "cmap ")
-          \ . (g:CR_old["silent"]  ? "<silent> " : "")
-          \ . (g:CR_old["nowait"]  ? "<nowait> " : "")
-          \ . (g:CR_old["expr"]    ? "<expr> "   : "")
-          \ . (g:CR_old["buffer"]  ? "<buffer> " : "")
-          \ . g:CR_old["lhs"]." ".g:CR_old["rhs"]
+    execute   (s:CR_old["noremap"] ? "cnoremap " : "cmap ")
+          \ . (s:CR_old["silent"]  ? "<silent> " : "")
+          \ . (s:CR_old["nowait"]  ? "<nowait> " : "")
+          \ . (s:CR_old["expr"]    ? "<expr> "   : "")
+          \ . (s:CR_old["buffer"]  ? "<buffer> " : "")
+          \ . s:CR_old["lhs"]." ".s:CR_old["rhs"]
   endif
-  unlet g:CR_old
+  unlet s:CR_old
 endfunction
 
-function! s:cmd_pattern() abort
-  return '\v%(%(^|\|)\s*%(\%|\d\,\d|' . "'\\<\\,'\\>" . ')?\s*)@<=(y%[ank]|d%[elete]|pu%[t]!?)\s*(['.s:tmux_reg.'+*])'
-endfunction
+let s:cli_pattern =
+      \ '\v%(%(^|\|)\s*%(\%|\d\,\d|' . "'\\<\\,'\\>" . ')?\s*)@<='
+      \ . '(y%[ank]|d%[elete]|pu%[t]!?)\s*(['
+      \   . escape(join(keys(s:regcmds), ''), ']^-\')
+      \ . '])'
 
-function! s:CR() abort
-  call s:restore_CR()
+function! s:cli_CR() abort
+  call s:cli_restore_CR()
   call histadd(":", getcmdline())
   let sid = matchstr(expand("<sfile>"), '<SNR>\d\+_')
   return substitute(getcmdline(),
-        \ s:cmd_pattern(),
-        \ 'call '.sid.'cmd(''\1'', ''\2'')', 'g')
+        \ s:cli_pattern,
+        \ 'call '.sid.'cli(''\1'', ''\2'')', 'g')
         \ . " | call histdel(':', -1)"
 endfunction
 
-" }}}
+function! s:cli_check() abort
+  return getcmdline() =~# s:cli_pattern
+endfunction
 
-" Mappings {{{
-
-augroup fauxClipCmdWrapper
+augroup fauxClip_CliWrapper
   autocmd!
-  autocmd CmdlineChanged : if getcmdline() =~# <SID>cmd_pattern()
-        \| if !exists('g:CR_old') | let g:CR_old = maparg('<CR>', 'c', '', 1) | endif
-        \| cnoremap <expr> <silent> <CR> getcmdline() =~# <SID>cmd_pattern() ? '<C-u>'.<SID>CR().'<CR>' : '<CR>'
-        \| elseif exists('g:CR_old') | call <SID>restore_CR() | endif
+  autocmd CmdlineChanged :
+        \  if <SID>cli_check()
+        \|   call <SID>cli_set_CR()
+        \| elseif exists('<SID>CR_old')
+        \|   call <SID>cli_restore_CR()
+        \| endif
 augroup END
-
-for r in [ '*', '+', s:tmux_reg ]
-  exec 'nnoremap <expr> "'.r '<SID>start("'.r.'")'
-  exec 'vnoremap <expr> "'.r '<SID>start("'.r.'")'
-
-  exec 'noremap! <C-r>'.r       '<C-r>=<SID>paste("'.r.'")<CR>'
-  exec 'noremap! <C-r><C-r>'.r  '<C-r><C-r>=<SID>paste("'.r.'")<CR>'
-  exec 'noremap! <C-r><C-o>'.r  '<C-r><C-o>=<SID>paste("'.r.'")<CR>'
-  exec 'inoremap <C-r><C-p>'.r  '<C-r><C-p>=<SID>paste("'.r.'")<CR>'
-endfor | unlet r
-
-" }}}
 
 let g:loaded_fauxClip = 1
 let &cpo = s:cpo_save | unlet s:cpo_save
