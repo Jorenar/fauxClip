@@ -68,10 +68,10 @@ if !has("clipboard") || get(g:, "fauxClip_always_use", 0)
           \|  echo "fauxClip: not all commands are set and could not find any of the defaults"
           \| echohl None
   endif
-endif
 
-call s:set("*", "yank",  s:regcmds["+"]["yank"])
-call s:set("*", "paste", s:regcmds["+"]["paste"])
+  call s:set("*", "yank",  s:regcmds["+"]["yank"])
+  call s:set("*", "paste", s:regcmds["+"]["paste"])
+endif
 
 let g:fauxClip_tmux_reg = get(g:, "fauxClip_tmux_reg", ']')
 if !empty(g:fauxClip_tmux_reg) && !empty($TMUX)
