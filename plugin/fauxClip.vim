@@ -80,6 +80,9 @@ if !empty(g:fauxClip_tmux_reg) && !empty($TMUX)
 endif
 
 
+if empty(s:regcmds) | finish | endif
+
+
 if get(g:, "fauxClip_suppress_errors", 1)
   let s:null = (executable("clip.exe") && !has("unix")) ? " 2> NUL" : " 2> /dev/null"
   for r in keys(s:regcmds)
