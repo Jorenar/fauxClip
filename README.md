@@ -70,6 +70,11 @@ regardless, then:
 let g:fauxClip_always_use = 1
 ```
 
+To disable removal of carriage return on Windows/WSL2 when pasting, set:
+```vim
+let g:fauxClip_crlf2lf = 0
+```
+
 ## Installation
 
 #### [vim-plug](https://github.com/junegunn/vim-plug):

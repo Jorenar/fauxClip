@@ -89,6 +89,13 @@ if get(g:, "fauxClip_suppress_errors", 1)
   endfor | unlet r s:null
 endif
 
+if get(g:, "fauxClip_crlf2lf", (has("unix") && executable("sed")))
+  for r in keys(s:regcmds)
+    if has_key(s:regcmds[r], "paste")
+      let s:regcmds[r]["paste"] .= " | sed 's/\\r$//g'"
+    endif
+  endfor | unlet r
+endif
 
 
 function! s:start(REG) abort

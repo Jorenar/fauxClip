@@ -14,11 +14,11 @@ without +clipboard.
 
 Default utilities for clipboard yank and paste are:
 
-    `xclip`                                    (on Linux with X11, or on WSL)
+    `wl-copy` + `wl-paste`                       (on Linux with Wayland, or WSL2)
+    `xclip`                                    (on Linux with X11, or WSL2)
     `xsel`                                     (fallback to `xclip`)
     `pbcopy` + `pbpaste`                         (on macOS)
     `clip.exe` + `powershell.exe Get-Clipboard`  (on Windows)
-    `wl-copy` + `wl-paste`                       (on Linux with Wayland)
 
 ==============================================================================
 
@@ -76,11 +76,18 @@ regardless, then:
 >
   let g:fauxClip_always_use = 1
 <
+
 stderr supression                                     *fauxClip-stderr-to-null*
 If for some reason you don't want to suppress error messages from clipboard
 command (e.g. `xclip`'s empty clipboard), then:
 >
   let g:fauxClip_suppress_errors = 0
+<
+
+removal of CR on paste                                       *fauxClip-crlf2lf*
+To disable removal of carriage return on Windows/WSL2 when pasting, set:
+>
+  let g:fauxClip_crlf2lf = 0
 <
 
 ==============================================================================
