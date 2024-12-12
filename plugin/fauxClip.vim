@@ -31,42 +31,36 @@ if !has("clipboard") || get(g:, "fauxClip_always_use", 0)
     call s:set("*", "paste", g:fauxClip_paste_primary_cmd)
   endif
 
-  if $WSL2_GUI_APPS_ENABLED && (executable("xclip") || executable("xsel"))
-    if executable("xclip")
-      call s:set("+", "yank",  "xclip -f -i -selection clipboard")
-      call s:set("+", "paste", "xclip -o -selection clipboard")
-    elseif executable("xsel")
-      call s:set("+", "yank",  "xsel -i -b")
-      call s:set("+", "paste", "xsel -o -b")
-    endif
-  elseif executable("clip.exe")
-    call s:set("+", "yank",  "clip.exe")
-    call s:set("+", "paste",
-          \    "powershell.exe Get-Clipboard"
-          \  . "| sed -Ez 's/\\r//g; $ s/\\n+$//'")
-  elseif executable("pbcopy")
-    call s:set("+", "yank",  "pbcopy")
-    call s:set("+", "paste", "pbpaste")
-  elseif executable("wl-copy")
+  if executable("wl-copy") && !empty($WAYLAND_DISPLAY)
     call s:set("+", "yank", "wl-copy")
     call s:set("*", "yank", "wl-copy --primary")
     call s:set("+", "paste", "wl-paste --no-newline")
     call s:set("*", "paste", "wl-paste --primary --no-newline")
-  elseif executable("xclip")
+  elseif executable("xclip") && !empty($DISPLAY)
     call s:set("+", "yank",  "xclip -f -i -selection clipboard")
     call s:set("+", "paste", "xclip -o -selection clipboard")
     call s:set("*", "yank",  "xclip -f -i")
     call s:set("*", "paste", "xclip -o")
-  elseif executable("xsel")
+  elseif executable("xsel") && !empty($DISPLAY)
     call s:set("+", "yank",  "xsel -i -b")
     call s:set("+", "paste", "xsel -o -b")
     call s:set("*", "yank",  "xsel -i")
     call s:set("*", "paste", "xsel -o")
+  elseif executable("clip.exe")
+    call s:set("+", "yank",  "clip.exe")
+    call s:set("+", "paste", "powershell.exe Get-Clipboard")
+  elseif executable("pbcopy")
+    call s:set("+", "yank",  "pbcopy")
+    call s:set("+", "paste", "pbpaste")
   else
     autocmd VimEnter * ++once
           \  echohl WarningMsg
           \|  echo "fauxClip: not all commands are set and could not find any of the defaults"
           \| echohl None
+  endif
+
+  if $WSL2_GUI_APPS_ENABLED
+    silent! unlet s:regcmds["*"]
   endif
 
   call s:set("*", "yank",  s:regcmds["+"]["yank"])
@@ -94,6 +88,7 @@ if get(g:, "fauxClip_suppress_errors", 1)
     endif
   endfor | unlet r s:null
 endif
+
 
 
 function! s:start(REG) abort

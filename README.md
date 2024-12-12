@@ -9,11 +9,11 @@ without _+clipboard_.
 
 Default utilities for clipboard yank and paste are:
 
-* `xclip`  (on Linux with X server, or WSL)
+* `wl-copy` + `wl-paste` (on Linux with Wayland, or WSL2)
+* `xclip`  (on Linux with X server, or WSL2)
 * `xsel`   (fallback to `xclip`)
 * `pbcopy` + `pbpaste` (on macOS)
 * `clip.exe` + `powershell.exe Get-Clipboard` (on Windows)
-* `wl-copy` + `wl-paste` (on Linux with Wayland)
 
 ---
 
