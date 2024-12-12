@@ -64,10 +64,10 @@ command (e.g. `xclip`'s empty clipboard), then:
 let g:fauxClip_suppress_errors = 0
 ```
 
-If Vim is compiled with _+clipboard_, but you want to use custom commands
-regardless, then:
+If Vim is compiled with +clipboard, but you want to force usage of custom
+commands for system clipboard regardless, then:
 ```vim
-let g:fauxClip_always_use = 1
+let g:fauxClip_sys_force = 1
 ```
 
 To disable removal of carriage return on Windows/WSL2 when pasting, set:

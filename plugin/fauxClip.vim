@@ -17,7 +17,8 @@ function! s:set(reg, action, cmd) abort
   let s:regcmds[a:reg][a:action] = a:cmd
 endfunction
 
-if !has("clipboard") || get(g:, "fauxClip_always_use", 0)
+if !has("clipboard") ||
+      \ get(g:, "fauxClip_sys_force", get(g:, "fauxClip_always_use", 0))
   if exists("g:fauxClip_copy_cmd")
     call s:set("+", "yank", g:fauxClip_copy_cmd)
   endif
