@@ -1,5 +1,5 @@
 " fauxClip - Clipboard support without +clipboard
-" Author:  Jorengarenar <dev@jorenar.com>
+" Author:  Jorenar <dev@jorenar.com>
 
 if exists("g:loaded_fauxClip") | finish | endif
 let s:cpo_save = &cpo | set cpo&vim

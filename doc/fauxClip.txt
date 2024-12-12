@@ -1,6 +1,6 @@
 *fauxClip.txt*   Clipboard support for Vim without +clipboard
 
-Author:  Jorengarenar                                        *fauxClip-author*
+Author:  Jorenar                                             *fauxClip-author*
 
 This plugin is only available if 'compatible' is not set and no |+clipboard|
 support.
