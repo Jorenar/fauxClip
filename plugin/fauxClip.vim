@@ -32,7 +32,9 @@ if !has("clipboard") ||
     call s:set("*", "paste", g:fauxClip_paste_primary_cmd)
   endif
 
-  if executable("wl-copy") && !empty($WAYLAND_DISPLAY)
+  if executable("wl-copy") && !empty($WAYLAND_DISPLAY) &&
+        \ (filereadable($XDG_RUNTIME_DIR . "/" . $WAYLAND_DISPLAY)
+        \  || filereadable($WAYLAND_DISPLAY))
     call s:set("+", "yank", "wl-copy")
     call s:set("*", "yank", "wl-copy --primary")
     call s:set("+", "paste", "wl-paste --no-newline")
