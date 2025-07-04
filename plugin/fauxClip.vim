@@ -55,19 +55,16 @@ if !has("clipboard") ||
   elseif executable("pbcopy")
     call s:set("+", "yank",  "pbcopy")
     call s:set("+", "paste", "pbpaste")
-  else
-    autocmd VimEnter * ++once
-          \  echohl WarningMsg
-          \|  echo "fauxClip: not all commands are set and could not find any of the defaults"
-          \| echohl None
   endif
 
   if $WSL2_GUI_APPS_ENABLED
     silent! unlet s:regcmds["*"]
   endif
 
-  call s:set("*", "yank",  s:regcmds["+"]["yank"])
-  call s:set("*", "paste", s:regcmds["+"]["paste"])
+  if !empty(get(s:regcmds, "+", {}))
+    call s:set("*", "yank",  s:regcmds["+"]["yank"])
+    call s:set("*", "paste", s:regcmds["+"]["paste"])
+  endif
 endif
 
 let g:fauxClip_tmux_reg = get(g:, "fauxClip_tmux_reg", ']')
