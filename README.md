@@ -79,16 +79,10 @@ let g:fauxClip_crlf2lf = 0
 
 #### [vim-plug](https://github.com/junegunn/vim-plug):
 ```vim
-Plug 'Jorenar/fauxClip'
+Plug 'https://codeberg.org/Jorenar/fauxClip.git'
 ```
 
 #### Vim's packages
 ```bash
-cd ~/.vim/pack/plugins/start
-git clone git://github.com/Jorenar/fauxClip.git
-```
-
-#### Single file
-```sh
-curl --create-dirs -L https://raw.githubusercontent.com/Jorenar/fauxClip/master/plugin/fauxClip.vim -o ~/.vim/plugin/fauxClip.vim
+git clone https://codeberg.org/Jorenar/fauxClip.git ~/.vim/pack/plugins/start/fauxClip
 ```
