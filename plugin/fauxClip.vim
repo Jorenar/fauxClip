@@ -4,6 +4,14 @@
 if exists("g:loaded_fauxClip") | finish | endif
 let s:cpo_save = &cpo | set cpo&vim
 
+if has('clipboard_provider')
+  echohl WarningMsg
+  echom "fauxClip plugin is deprecated, use native clipboard-providers instead"
+  echohl None
+elseif has('nvim')
+  lua vim.deprecate('fauxClip plugin', 'native provider-clipboard', '', 'N/A', false)
+endif
+
 let s:regcmds = get(g:, "fauxClip_regcmds", {})
 
 function! s:set(reg, action, cmd) abort

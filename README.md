@@ -1,7 +1,15 @@
 fauxClip
 ========
 
-**fauxClip** is a Vim plugin allowing to define custom registers, with primary
+**DEPRECATION NOTICE**
+
+This plugin is deprecated in favour of native clipboard providers:
+* [`clipboard-providers`](https://vimhelp.org/eval.txt.html#clipboard-providers) in [Vim 9.1.1972](https://github.com/vim/vim/commit/fcd3958dc)
+* [`provider-clipboard`](https://neovim.io/doc/user/provider/#provider-clipboard) in Neovim
+
+---
+
+**fauxClip** is a Vim plugin allowing defining custom registers, with primary
 goal of providing a pseudo _clipboard_ support for versions of Vim compiled
 without _+clipboard_.
 
@@ -17,7 +25,7 @@ Default utilities for clipboard yank and paste are:
 
 ---
 
-Assuming you are on Linux, using Tmux, `xclip` is installed, and you didn't
+Assuming you are on Linux, using tmux, `xclip` is installed, and you didn't
 change any of fauxClip's defaults, then the dictionary with commands for
 registers will be set as following:
 
@@ -53,7 +61,7 @@ them to empty strings.
 
 ---
 
-To set different "register" for Tmux than `]`:
+To set different "register" for tmux than `]`:
 ```vim
 let g:fauxClip_tmux_reg = 't'
 ```
@@ -73,16 +81,4 @@ let g:fauxClip_sys_force = 1
 To disable removal of carriage return on Windows/WSL2 when pasting, set:
 ```vim
 let g:fauxClip_crlf2lf = 0
-```
-
-## Installation
-
-#### [vim-plug](https://github.com/junegunn/vim-plug):
-```vim
-Plug 'https://codeberg.org/Jorenar/fauxClip.git'
-```
-
-#### Vim's packages
-```bash
-git clone https://codeberg.org/Jorenar/fauxClip.git ~/.vim/pack/plugins/start/fauxClip
 ```

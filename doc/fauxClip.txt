@@ -1,12 +1,19 @@
 *fauxClip.txt*   Clipboard support for Vim without +clipboard
 
-Author:  Jorenar                                             *fauxClip-author*
+Author: Jorenar                                               *fauxClip-author*
 
 This plugin is only available if 'compatible' is not set and no |+clipboard|
 support.
 
 ==============================================================================
-                                                                    *fauxClip*
+fauxClip deprecation                                      *fauxClip-deprecated*
+
+This plugin is deprecated in favour of native clipboard providers:
+- |clipboard-providers| in Vim (since 9.1.1972)
+- |provider-clipboard| in Neovim
+
+==============================================================================
+                                                                     *fauxClip*
 
 fauxClip is a Vim plugin allowing to define custom registers, with primary
 goal of providing a pseudo clipboard support for versions of Vim compiled
@@ -14,14 +21,13 @@ without +clipboard.
 
 Default utilities for clipboard yank and paste are:
 
-    `wl-copy` + `wl-paste`                       (on Linux with Wayland, or WSL2)
-    `xclip`                                    (on Linux with X11, or WSL2)
-    `xsel`                                     (fallback to `xclip`)
-    `pbcopy` + `pbpaste`                         (on macOS)
-    `clip.exe` + `powershell.exe Get-Clipboard`  (on Windows)
+- `wl-copy` + `wl-paste`                       (on Linux with Wayland, or WSL2)
+- `xclip`                                    (on Linux with X11, or WSL2)
+- `xsel`                                     (fallback to `xclip`)
+- `pbcopy` + `pbpaste`                         (on macOS)
+- `clip.exe` + `powershell.exe Get-Clipboard`  (on Windows)
 
 ==============================================================================
-
 fauxClip customization                                 *fauxClip-customization*
 
 fuaxClip will need both a copy command and paste command in order to mimic
@@ -30,7 +36,7 @@ clipboard support.
 Primary Clipboard                                          *fauxClip-quotestar*
 X11 Selection                              *fauxClip-quoteplus* *fauxClip-quote+*
 
-Assuming you are on Linux, useing Tmux, `xclip` is installed, and didn't
+Assuming you are on Linux, useing tmux, `xclip` is installed, and didn't
 change any of fauxClip's defaults, then the dictionary with commands for
 registers will be set as following:
 >
@@ -64,8 +70,8 @@ Note: To disable clipboard registers `*` and `+` you need to explicitly
       set them to empty strings.
 
 
-Tmux Integration                                                *fauxClip-tmux*
-To set different "register" for Tmux than `]`:
+tmux Integration                                                *fauxClip-tmux*
+To set different "register" for tmux than `]`:
 >
   let g:fauxClip_tmux_reg = ']'
 <
